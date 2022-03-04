@@ -1,0 +1,9 @@
+:manifest lib Map
+  :sources "src/*.savi"
+
+:manifest bin "spec"
+  :copies Map
+  :sources "spec/*.savi"
+
+  :dependency Spec v0
+    :depends on Map
