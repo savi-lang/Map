@@ -6,4 +6,5 @@
   :sources "spec/*.savi"
 
   :dependency Spec v0
+    :from "github:savi-lang/Spec"
     :depends on Map
