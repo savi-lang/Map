@@ -1,0 +1,10 @@
+:manifest lib Map
+  :sources "src/*.savi"
+
+:manifest bin "spec"
+  :copies Map
+  :sources "spec/*.savi"
+
+  :dependency Spec v0
+    :from "github:savi-lang/Spec"
+    :depends on Map
