@@ -41,7 +41,7 @@
     @_init_array(space)
 
     old_array.each -> (entry |
-      if (entry <: @->(_KVBA(K, V))) (
+      if entry <: @->(_KVBA(K, V)) (
         try (@_array[@_search(entry.key)]! = entry)
       )
     )
@@ -64,7 +64,7 @@
 
   :fun ref _place_entry_as_head(entry _KVBA(K, V))
     head = @_head
-    if (head <: _KVBA(K, V)) (
+    if head <: _KVBA(K, V) (
       try ( // this should never fail - _KVBA instances are always initialized
         // Link this entry to come before the one after the current head.
         head.after!.before = entry, entry.after = head.after!
@@ -121,7 +121,7 @@
         entry.value = --value
 
         // If this entry is not already the head, we will make it the new head.
-        if (entry !== @_head) (
+        if entry !== @_head (
           @_remove_entry_from_place(entry)
           @_place_entry_as_head(entry)
         )
@@ -132,8 +132,8 @@
         @_array[index]! = new_entry
         @_size += 1
 
-        if (entry <: _MapEmpty) (
-          if (@_size * 4 > @_array.size * 3) (
+        if entry <: _MapEmpty (
+          if @_size * 4 > @_array.size * 3 (
             @_resize(@_array.size * 2)
           )
         )
@@ -156,7 +156,7 @@
       entry = @_array[index]! <<= _MapDeleted
 
       @_size -= 1
-      @_head = if (@_size == 0) (None | @_head.as!(@->(_KVBA(K, V))).before!) // TODO: fix @-> parentheses
+      @_head = if @_size == 0 (None | @_head.as!(@->(_KVBA(K, V))).before!) // TODO: fix @-> parentheses
       @_remove_entry_from_place(
         entry.as!(@->(_KVBA(K, V))) // TODO: fix @-> parentheses
       )
@@ -186,7 +186,7 @@
             error! // TODO: use early return instead of error!
           )
         | _MapEmpty |
-          if (idx_del > mask) (
+          if idx_del > mask (
             result_idx = idx
           |
             result_idx = idx_del
@@ -194,7 +194,7 @@
           found = False
           error!
         | _MapDeleted |
-          if (idx_del > mask) (
+          if idx_del > mask (
             idx_del = idx
           )
         )
@@ -211,7 +211,7 @@
     try ( // this should only fail when the map is empty, thus yielding nothing
       head = @_head.not!(None)
       entry = head.after!
-      while (entry !== head) (
+      while entry !== head (
         yield (entry.key, entry.value)
         entry = entry.after!
       )
@@ -227,7 +227,7 @@
     try ( // this should only fail when the map is empty, thus yielding nothing
       head = @_head.not!(None)
       entry = head.after!
-      while (entry !== head && !early_stop) (
+      while entry !== head && !early_stop (
         early_stop = yield (entry.key, entry.value)
         entry = entry.after!
       )

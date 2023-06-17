@@ -25,7 +25,7 @@
     @_init_array(space)
 
     old_array.each -> (entry |
-      if (entry <: Pair(K, V)) (
+      if entry <: Pair(K, V) (
         try (@_array[@_search(entry.key)]! = entry)
       )
     )
@@ -75,7 +75,7 @@
         @_size += 1
       | _MapEmpty |
         @_size += 1
-        if (@_size * 4 > @_array.size * 3) (
+        if @_size * 4 > @_array.size * 3 (
           @_resize(@_array.size * 2)
         )
       )
@@ -121,7 +121,7 @@
             error! // TODO: use early return instead of error!
           )
         | _MapEmpty |
-          if (idx_del > mask) (
+          if idx_del > mask (
             result_idx = idx
           |
             result_idx = idx_del
@@ -129,7 +129,7 @@
           found = False
           error!
         | _MapDeleted |
-          if (idx_del > mask) (
+          if idx_del > mask (
             idx_del = idx
           )
         )
@@ -143,7 +143,7 @@
   :: Yield each key and value in the map.
   :fun each
     @_array.each -> (entry |
-      if (entry <: @->(Pair(K, V))) (
+      if entry <: @->(Pair(K, V)) (
         yield (entry.key, entry.value)
       )
     )
@@ -154,7 +154,7 @@
   :fun each_until
     :yields for Bool
     @_array.each_until -> (entry |
-      if (entry <: @->(Pair(K, V))) (
+      if entry <: @->(Pair(K, V)) (
         yield (entry.key, entry.value)
       |
         False
