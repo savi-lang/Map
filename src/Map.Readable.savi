@@ -6,8 +6,15 @@
 :: of the interface can get them "for free" by inheriting the trait.
 :trait box Map.Readable(K, V)
   :fun size USize
+
   :fun has_key(key K) Bool
   :fun "[]!"(key K) @->(V'aliased)
+
+  :: Return true if the map is empty (i.e. has no key/value pairs).
+  :fun is_empty Bool: @size == 0
+
+  :: Return true if the map is non-empty (i.e. has at lease one key/value pair).
+  :fun is_not_empty Bool: @size != 0
 
   :: Yield each key and value in the map.
   :fun each None
