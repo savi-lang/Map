@@ -13,6 +13,21 @@
     yield map
     map
 
+  :it "knows the size of the map"
+    map = @build_map -> (map |
+      map["foo"] = 11
+      map["bar"] = 22
+      map["baz"] = 33
+    )
+    assert: map.size == 3
+    assert: map.is_empty.is_false
+    assert: map.is_not_empty
+
+    map = @build_map -> (map | None)
+    assert: map.size == 0
+    assert: map.is_empty
+    assert: map.is_not_empty.is_false
+
   :it "yields each key and each value (separately)"
     map = @build_map -> (map |
       map["foo"] = 11
