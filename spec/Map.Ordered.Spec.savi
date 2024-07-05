@@ -22,6 +22,28 @@
     assert: map.has_key("example").is_false
     assert: map.size == 0
 
+  :it "gets an existing value or inserts if it didn't exist"
+    map = @new_map
+    assert: map.size == 0
+    assert error: map["example"]!
+    assert: map.has_key("example").is_false
+    assert: (map.get_or_insert("example") -> (U64[99])) == 99 // TODO: remove U64 explicit type
+    assert: map.size == 1
+    assert: map["example"]! == 99
+    assert: map.has_key("example")
+    assert: (map.get_or_insert("example") -> (U64[100])) == 99 // TODO: remove U64 explicit type
+    assert: map.size == 1
+    assert: map["example"]! == 99
+    assert: map.has_key("example")
+    assert: map.delete("example") <: None
+    assert: map.size == 0
+    assert error: map["example"]!
+    assert: map.has_key("example").is_false
+    assert: (map.get_or_insert("example") -> (U64[101])) == 101 // TODO: remove U64 explicit type
+    assert: map.size == 1
+    assert: map["example"]! == 101
+    assert: map.has_key("example")
+
   :it "can be cleared, removing all keys and values"
     map = @new_map
     map["foo"] = 11
@@ -34,7 +56,7 @@
   :it "yields each key and value (in insertion order)"
     map = @new_map
     map["foo"] = 11
-    map["bar"] = 22
+    map.get_or_insert("bar") -> (U64[22]) // TODO: remove U64 explicit type
     map["baz"] = 33
     map["foo"] = 44
     map["baz"] = 55

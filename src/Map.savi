@@ -66,20 +66,7 @@
   ::
   :fun ref "[]="(key K, value V)
     value_alias V'aliased = value // TODO: remove the V'aliased explicit type?
-    try (
-      index = @_search(key)
-      old_entry = @_array[index]! <<= Pair(K, V).new(--key, --value)
-
-      case old_entry <: (
-      | _MapDeleted |
-        @_size += 1
-      | _MapEmpty |
-        @_size += 1
-        if @_size * 4 > @_array.size * 3 (
-          @_resize(@_array.size * 2)
-        )
-      )
-    )
+    try @_insert_at_index!(@_search(key), --key, --value) // this try can "never" fail
     value_alias
 
   :: Discard the value assigned to the given key.
@@ -97,6 +84,33 @@
       @_size -= 1
     )
     None
+
+  :: Return the value assigned to the given key, if present.
+  :: If the key is not present, the given yield block will be executed to
+  :: provide a value to assign to the key, which will also be returned.
+  ::
+  :: If the key was already present, the yield block will not be executed.
+  ::
+  :: $ map = Map(String, U64).new
+  :: $ map.get_or_insert("example") -> (99)
+  :: > 99 // the new value is returned
+  :: $ map.get_or_insert("example") -> (100)
+  :: > 99 // the existing value is returned
+  :: $ map.delete("example"), map.get_or_insert("example") -> (101)
+  :: > 101 // the old value was deleted, so the new value is returned
+  ::
+  :fun ref get_or_insert(key K)
+    :yields for V
+    index = @_search(key)
+    try (
+      pair = @_array[index]!.as!(@->(Pair(K, V)))
+      return pair.value // TODO: no intermediate pair needed
+    )
+
+    value = yield None
+    value_alias V'aliased = value // TODO: remove the V'aliased explicit type?
+    try @_insert_at_index!(index, --key, --value) // this try can "never" fail
+    value_alias
 
   :: Given a key, find the internal index associated with the hash of that key.
   :fun _search(key)
@@ -139,6 +153,19 @@
     )
 
     result_idx // TODO: also return `found`
+
+  :fun ref _insert_at_index!(index USize, key K, value V) None
+    old_entry = @_array[index]! <<= Pair(K, V).new(--key, --value)
+
+    case old_entry <: (
+    | _MapDeleted |
+      @_size += 1
+    | _MapEmpty |
+      @_size += 1
+      if @_size * 4 > @_array.size * 3 (
+        @_resize(@_array.size * 2)
+      )
+    )
 
   :: Yield each key and value in the map.
   :fun each

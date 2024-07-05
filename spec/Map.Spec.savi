@@ -25,6 +25,28 @@
     assert: map.has_key("example").is_false
     assert: map.size == 0
 
+  :it "gets an existing value or inserts if it didn't exist"
+    map = @new_map
+    assert: map.size == 0
+    assert error: map["example"]!
+    assert: map.has_key("example").is_false
+    assert: (map.get_or_insert("example") -> (U64[99])) == 99 // TODO: remove U64 explicit type
+    assert: map.size == 1
+    assert: map["example"]! == 99
+    assert: map.has_key("example")
+    assert: (map.get_or_insert("example") -> (U64[100])) == 99 // TODO: remove U64 explicit type
+    assert: map.size == 1
+    assert: map["example"]! == 99
+    assert: map.has_key("example")
+    assert: map.delete("example") <: None
+    assert: map.size == 0
+    assert error: map["example"]!
+    assert: map.has_key("example").is_false
+    assert: (map.get_or_insert("example") -> (U64[101])) == 101 // TODO: remove U64 explicit type
+    assert: map.size == 1
+    assert: map["example"]! == 101
+    assert: map.has_key("example")
+
   :it "stores values at actor keys by identity"
     foo = _MapElementExampleActor.new
     bar = _MapElementExampleActor.new
