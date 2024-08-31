@@ -260,21 +260,3 @@
       yield (entry.key, entry.value) // yield once more for the head
     )
     None
-
-  :: Yield each key and value in the map, in the order in they were inserted,
-  :: with the oldest key/value pairs appearing first, ending with the newest.
-  :fun each_until
-    :yields for Bool
-    early_stop = False
-    try ( // this should only fail when the map is empty, thus yielding nothing
-      head = @_head.not!(None)
-      entry = head.after!
-      while entry !== head && !early_stop (
-        early_stop = yield (entry.key, entry.value)
-        entry = entry.after!
-      )
-      if !early_stop (
-        early_stop = yield (entry.key, entry.value) // yield once more for the head
-      )
-    )
-    early_stop

@@ -81,23 +81,3 @@
     assert: copy["foo"]! == 11
     assert: copy["bar"]! == 22
     assert: copy["baz"]! == 33
-
-  :it "yields each key and value until the criteria is met"
-    map = @new_map
-    map["foo"] = 11
-    map["bar"] = 22
-    map["baz"] = 33
-
-    this_key = ""
-    found_it = map.each_until -> (key, value | this_key = key, value == 22)
-    assert: found_it
-    assert: this_key == "bar"
-
-    this_key = ""
-    found_it = map.each_until -> (key, value | this_key = key, value == 33)
-    assert: found_it
-    assert: this_key == "baz"
-
-    this_key = ""
-    found_it = map.each_until -> (key, value | this_key = key, value == 99)
-    assert: found_it.is_false
