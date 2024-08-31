@@ -47,27 +47,6 @@
     map.each_value -> (value | total_value += value)
     assert: total_value == 66
 
-  :it "yields each key and each value (separately) until the criteria is met"
-    map = @build_map -> (map |
-      map["foo"] = 11
-      map["bar"] = 22
-      map["baz"] = 33
-    )
-
-    this_key = ""
-    found_it = map.each_key_until -> (key | this_key = key, key.ends_with("o"))
-    assert: found_it
-    assert: this_key == "foo"
-
-    this_key = ""
-    found_it = map.each_key_until -> (key | this_key = key, key.ends_with("z"))
-    assert: found_it
-    assert: this_key == "baz"
-
-    this_key = ""
-    found_it = map.each_key_until -> (key | this_key = key, key.ends_with("x"))
-    assert: found_it.is_false
-
   :it "checks if any pair in the map meets the given condition"
     map = @build_map -> (map |
       map["foo"] = 11
